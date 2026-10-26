@@ -1,2 +1,2 @@
 # QuantumOptimisation
-changes 
+QuantOpt and applied algorithms
