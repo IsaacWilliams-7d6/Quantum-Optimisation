@@ -60,17 +60,16 @@ def FuncA():
     t = 1
     return (1-t)/tmax
 
-def FuncB():
+def FuncB(t):
     tmax = 1
-    t = 0
     return t/tmax
 
 def TransFieldH (H):
     Bitflip = np.zeros((2**len(H), 2**len(H)))
     for i in range(0, len(H)):
-        Bitflip += -FuncA*Kronecker(len(H), i+1, 'x')
+        Bitflip += -FuncA(t)*Kronecker(len(H), i+1, 'x')
 
-    return Bitflip + FuncB * H
+    return Bitflip + FuncB(t) * H
 
 
 #%% Tests
