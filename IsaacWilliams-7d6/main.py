@@ -33,7 +33,7 @@ def Kronecker (n, j, i):
 def H_Ising(J):
     epsilon = 0.2
     kappa = np.array([[epsilon],[epsilon],[epsilon]])
-
+    #kappa is to remove bad solutions
     h = -np.sum(J + np.transpose(J), axis=0) + kappa
 
     field = np.zeros((2**len(J), 2**len(J)))
@@ -55,9 +55,9 @@ def GroundState(H):
     min_index = np.argmin(eigenvalues)
     ground_state = eigenvectors[:, min_index]
     return ground_state
-def FuncA():
+
+def FuncA(t):
     tmax = 1
-    t = 1
     return (1-t)/tmax
 
 def FuncB(t):
@@ -65,11 +65,16 @@ def FuncB(t):
     return t/tmax
 
 def TransFieldH (H):
+    t=1
     Bitflip = np.zeros((2**len(H), 2**len(H)))
     for i in range(0, len(H)):
         Bitflip += -FuncA(t)*Kronecker(len(H), i+1, 'x')
 
     return Bitflip + FuncB(t) * H
+
+#time evolution operator
+#
+
 
 
 #%% Tests
@@ -83,6 +88,6 @@ I_2 = np.array([[1,0],[0,1]]) #Identity matrix 2x2
 
 #print(H_Ising(test))   
 
-print(GroundState(H_Ising(test)))
+#print(GroundState(H_Ising(test)))
 print(GroundState(H_Ising(M)))
 # %%
