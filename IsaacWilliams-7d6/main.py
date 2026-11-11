@@ -1,7 +1,6 @@
 #Libraries
 import numpy as np
 
-
 #%%
 #Functions
 def Pauli(i):
@@ -31,8 +30,9 @@ def Kronecker (n, j, i):
         raise ValueError("n must be a positive integer")
 
 def H_Ising(J):
-    epsilon = 0.2
-    kappa = np.array([[epsilon],[epsilon],[epsilon]])
+    epsilon = 0.5
+    kappa = epsilon * np.array([[1],[1],[1],[1],[1]])
+    #kappa = epsilon * np.ones((len(J)))
     #kappa is to remove bad solutions
     h = -np.sum(J + np.transpose(J), axis=0) + kappa
 
@@ -56,24 +56,28 @@ def GroundState(H):
     ground_state = eigenvectors[:, min_index]
     return ground_state
 
-def FuncA(t):
-    tmax = 1
+def FuncA(t, tmax):
     return (1-t)/tmax
 
-def FuncB(t):
-    tmax = 1
+def FuncB(t, tmax):
     return t/tmax
 
-def TransFieldH (H):
-    t=1
-    Bitflip = np.zeros((2**len(H), 2**len(H)))
+def TransFieldH(M, t, tmax):
+    H = H_Ising(M)
+    Bitflip = np.zeros((len(H), len(H)))
     for i in range(0, len(H)):
-        Bitflip += -FuncA(t)*Kronecker(len(H), i+1, 'x')
+        Bitflip += -FuncA(t, tmax)*Kronecker(len(M), i+1, 'x')
 
-    return Bitflip + FuncB(t) * H
+    return Bitflip + FuncB(t, tmax) * H
+
+def TimeEvolution(M, tmax):
+    for i in range(0, k):
+        ExpH = scipy.linalg.expm(-j*(tmax/q)*TransFieldH(M, (i*tmax)/q, tmax))
+
+
+
 
 #time evolution operator
-#
 
 
 
@@ -90,4 +94,12 @@ I_2 = np.array([[1,0],[0,1]]) #Identity matrix 2x2
 
 #print(GroundState(H_Ising(test)))
 print(GroundState(H_Ising(M)))
+print(TransFieldH(M, 0))
+print(TransFieldH(M, 1))
+
+
+
 # %%
+
+
+
