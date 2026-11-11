@@ -70,9 +70,9 @@ def TransFieldH(M, t, tmax):
 
     return Bitflip + FuncB(t, tmax) * H
 
-def TimeEvolution(M, tmax):
-    for i in range(0, k):
-        ExpH = scipy.linalg.expm(-j*(tmax/q)*TransFieldH(M, (i*tmax)/q, tmax))
+def TimeEvolution(M, tmax, q):
+    for i in range(0, q):
+        ExpH = scipy.linalg.expm(-1j*(tmax/q)*TransFieldH(M, (i*tmax)/q, tmax))
 
 
 
