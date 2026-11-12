@@ -1,6 +1,7 @@
 #Libraries
 import numpy as np
 import scipy
+import matplotlib.pyplot as plt
 #%%
 #Functions
 def Pauli(i):
@@ -11,6 +12,10 @@ def Pauli(i):
         return np.array([[0, -1j], [1j, 0]])
     elif i=='z':
         return np.array([[1, 0], [0, -1]])
+    
+def InnerProd(bra, ket):
+    bra = bra.conjugate()
+    return np.inner(bra.transpose(), ket.transpose())
 
 def Tensor(MatA, MatB):
     return np.kron(MatA,MatB)
@@ -76,15 +81,22 @@ def TransFieldH(M, t, tmax):
 def TimeEvolution(M, q, tmax):
     #Time Evolution operator
     U = np.identity(2**len(M), complex) 
-    
+    psi_start = GroundState(TransFieldH(M, 0, tmax))
+    psi_ground = GroundState(H_Ising(M))
+    Prob = np.array([])
+    TStep = np.array([])
     for i in range(1, q+1):
         ExpH = scipy.linalg.expm(-1j*(tmax/q)*TransFieldH(M, (i*tmax)/q, tmax))
         U = np.dot(ExpH, U)
-    return U
 
-def InnerProd(bra, ket):
-    bra = bra.conjugate()
-    return np.inner(bra.transpose(), ket.transpose())
+        psi_current = np.dot(U, psi_start)
+        P_current = abs(InnerProd(psi_current, psi_ground))**2
+        Prob = np.append(Prob, P_current)
+        TStep = np.append(TStep, (i*tmax)/q)
+
+    return Prob, TStep
+
+
 #time evolution operator
 
 
@@ -98,24 +110,19 @@ Up = np.array([[1], [0]]) #Column vector for spin up
 Down = np.array([[0], [1]]) #Column vector for spin down
 I_2 = np.array([[1,0],[0,1]]) #Identity matrix 2x2
 
-#print(InnerProd(Up, Up))
 
-
-
-#print(np.linalg.norm(GroundState(TransFieldH(M, 0, 100))))
-#print(np.linalg.norm(np.dot(TimeEvolution(M, 1000, 100), GroundState(TransFieldH(M, 0, 100)))))
-
-psi_final = np.dot(TimeEvolution(M, 10000, 100), GroundState(TransFieldH(M, 0, 100)))
-psi_ground = GroundState(H_Ising(M))
-print(abs(InnerProd(psi_final, psi_ground))**2)
-
-
-
-# %%
-print(FuncA(0, 100), FuncB(0, 100))
-print(FuncA(100, 100), FuncB(100, 100))
-
+#fig = plt.figure(figsize=(12,8))
+for i in range (0,5):
+    Runtime = [1, 2, 5, 10, 100]
+    step = 1000
+    colour = ['blue', 'orange', 'green', 'red', 'purple']
+    PSuccess, Time = TimeEvolution(M, step, Runtime[i])
+    plt.plot(Time/Runtime[i], PSuccess, color = colour[i])
+plt.show()
 
 
 
 # %%
+
+
+
