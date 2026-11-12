@@ -1,9 +1,10 @@
 #Libraries
 import numpy as np
-
+import scipy
 #%%
 #Functions
 def Pauli(i):
+    #Defining Pauli Spin Matricies
     if i=='x' :
         return np.array([[0, 1], [1, 0]])
     elif i=='y':
@@ -30,6 +31,7 @@ def Kronecker (n, j, i):
         raise ValueError("n must be a positive integer")
 
 def H_Ising(J):
+    #Defining the Ising Hamiltonian
     epsilon = 0.5
     kappa = epsilon * np.array([[1],[1],[1],[1],[1]])
     #kappa = epsilon * np.ones((len(J)))
@@ -50,19 +52,20 @@ def H_Ising(J):
     return coupling + field
 
 def GroundState(H):
-
+    #Extracting the ground state from the hamiltonian
     eigenvalues, eigenvectors = np.linalg.eig(H)
     min_index = np.argmin(eigenvalues)
     ground_state = eigenvectors[:, min_index]
     return ground_state
 
 def FuncA(t, tmax):
-    return (1-t)/tmax
+    return 1-t/tmax
 
 def FuncB(t, tmax):
     return t/tmax
 
 def TransFieldH(M, t, tmax):
+    #Defining the Transverse-Field Hamiltonian
     H = H_Ising(M)
     Bitflip = np.zeros((len(H), len(H)))
     for i in range(0, len(H)):
@@ -70,13 +73,18 @@ def TransFieldH(M, t, tmax):
 
     return Bitflip + FuncB(t, tmax) * H
 
-def TimeEvolution(M, tmax, q):
-    for i in range(0, q):
+def TimeEvolution(M, q, tmax):
+    #Time Evolution operator
+    U = np.identity(2**len(M), complex) 
+    
+    for i in range(1, q+1):
         ExpH = scipy.linalg.expm(-1j*(tmax/q)*TransFieldH(M, (i*tmax)/q, tmax))
+        U = np.dot(ExpH, U)
+    return U
 
-
-
-
+def InnerProd(bra, ket):
+    bra = bra.conjugate()
+    return np.inner(bra.transpose(), ket.transpose())
 #time evolution operator
 
 
@@ -90,16 +98,24 @@ Up = np.array([[1], [0]]) #Column vector for spin up
 Down = np.array([[0], [1]]) #Column vector for spin down
 I_2 = np.array([[1,0],[0,1]]) #Identity matrix 2x2
 
-#print(H_Ising(test))   
+#print(InnerProd(Up, Up))
 
-#print(GroundState(H_Ising(test)))
-print(GroundState(H_Ising(M)))
-print(TransFieldH(M, 0))
-print(TransFieldH(M, 1))
+
+
+#print(np.linalg.norm(GroundState(TransFieldH(M, 0, 100))))
+#print(np.linalg.norm(np.dot(TimeEvolution(M, 1000, 100), GroundState(TransFieldH(M, 0, 100)))))
+
+psi_final = np.dot(TimeEvolution(M, 10000, 100), GroundState(TransFieldH(M, 0, 100)))
+psi_ground = GroundState(H_Ising(M))
+print(abs(InnerProd(psi_final, psi_ground))**2)
 
 
 
 # %%
+print(FuncA(0, 100), FuncB(0, 100))
+print(FuncA(100, 100), FuncB(100, 100))
 
 
 
+
+# %%
