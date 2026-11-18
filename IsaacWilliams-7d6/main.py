@@ -3,6 +3,25 @@ import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 #%%
+plt.rcParams["font.family"] = "Times New Roman"
+plt.rcParams["font.size"] = 25
+plt.rcParams['axes.labelsize'] = 30
+plt.rcParams['ytick.major.size'] = 18
+plt.rcParams['ytick.minor.size'] = 8
+plt.rcParams['xtick.major.size'] = 18
+plt.rcParams['xtick.minor.size'] = 8
+plt.rcParams["lines.linewidth"] = 2.0
+plt.rcParams["axes.linewidth"] = 2.0
+plt.rcParams["lines.markersize"] = 5
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['ytick.minor.visible'] = True
+plt.rcParams['xtick.minor.visible'] = True
+
+#%%
+
 #Functions
 def Pauli(i):
     #Defining Pauli Spin Matricies
@@ -96,11 +115,6 @@ def TimeEvolution(M, q, tmax):
 
     return Prob, TStep
 
-
-#time evolution operator
-
-
-
 #%% Tests
 
 M = np.array([[0,1,1,0,0],[0,0,1,0,1],[0,0,0,1,1],[0,0,0,0,0],[0,0,0,0,0]]) #NP hard problem
@@ -118,11 +132,23 @@ for i in range (0,5):
     colour = ['blue', 'orange', 'green', 'red', 'purple']
     PSuccess, Time = TimeEvolution(M, step, Runtime[i])
     plt.plot(Time/Runtime[i], PSuccess, color = colour[i])
+plt.ylabel('Probability of Success')
+plt.xlabel('Time (t/tmax)')
+#%%
 plt.show()
 
 
-
+# %%
+finalP = np.array([])
+runtime = np.array([])
+for i in range (1,100, 1):
+    step = 1000
+    PSuccess, Time = TimeEvolution(M, step, i)
+    runtime = np.append(runtime, i)
+    finalP = np.append(finalP, PSuccess[-1])
 # %%
 
-
-
+plt.plot(runtime, finalP)
+plt.ylabel('Probability of Success')
+plt.xlabel('Runtime')
+plt.show()
