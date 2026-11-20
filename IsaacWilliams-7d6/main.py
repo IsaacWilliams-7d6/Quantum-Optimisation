@@ -125,7 +125,7 @@ Down = np.array([[0], [1]]) #Column vector for spin down
 I_2 = np.array([[1,0],[0,1]]) #Identity matrix 2x2
 
 
-#fig = plt.figure(figsize=(12,8))
+plt.figure(figsize=(12,8))
 for i in range (0,5):
     Runtime = [1, 2, 5, 10, 100]
     step = 1000
@@ -134,7 +134,8 @@ for i in range (0,5):
     plt.plot(Time/Runtime[i], PSuccess, color = colour[i])
 plt.ylabel('Probability of Success')
 plt.xlabel('Time (t/tmax)')
-#%%
+plt.xlim(0,1)
+plt.ylim(0,1)
 plt.show()
 
 
@@ -147,8 +148,10 @@ for i in range (1,100, 1):
     runtime = np.append(runtime, i)
     finalP = np.append(finalP, PSuccess[-1])
 # %%
-
+plt.figure(figsize=(12,8))
 plt.plot(runtime, finalP)
+plt.xlim(0,100)
+plt.ylim(0,1)
 plt.ylabel('Probability of Success')
 plt.xlabel('Runtime')
 plt.show()
